@@ -1,0 +1,6 @@
+@EnhancedPensionSystem_WebAPP_HostAddress = http://localhost:5233
+
+GET {{EnhancedPensionSystem_WebAPP_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
