@@ -5,8 +5,6 @@ namespace EnhancedPensionSystem_Domain.Models;
 
 public class AppUser : IdentityUser, IBaseEntity
 {
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
     public bool IsDeleted { get; set; } = false;
     public AppUserType AppUserType { get; set; }
     public virtual ICollection<Notification>? Notifications { get; set; }

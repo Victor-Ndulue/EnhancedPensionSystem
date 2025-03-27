@@ -1,13 +1,12 @@
-﻿using EnhancedPensionSystem_Infrastructure.Repository.Implementations;
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using EnhancedPensionSystem_Infrastructure.DataContext;
 using EnhancedPensionSystem_Domain.Models;
 
-namespace EnhancedPensionSystem_Infrastructure.Repository.Abstractions;
+namespace EnhancedPensionSystem_Infrastructure.Repository.Implementations;
 
-public sealed class GenericRepository<T>:IGenericRepository<T> where T : class, IBaseEntity
+public sealed class GenericRepository<T> : IGenericRepository<T> where T : class, IBaseEntity
 {
     private readonly AppDbContext _dataContext;
     private readonly DbSet<T> _dbSet;
