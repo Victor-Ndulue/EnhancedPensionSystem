@@ -2,10 +2,11 @@
 using EnhancedPensionSystem_Application.Helpers.DTOs.Responses;
 using EnhancedPensionSystem_Application.Helpers.ObjectFormatter;
 using EnhancedPensionSystem_Application.Services.Abstractions;
-using EnhancedPensionSystem_Application.UnitOfWork.Implementations;
+using EnhancedPensionSystem_Application.UnitOfWork.Abstraction;
 using EnhancedPensionSystem_Domain.Models;
 using EnhancedPensionSystem_Infrastructure.Repository.Implementations;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace EnhancedPensionSystem_Application.Services.Implementations;
 
@@ -13,32 +14,33 @@ public sealed class MemberService : IMemberService
 {
     private readonly IGenericRepository<Member> _memberRepository;
     private readonly UserManager<AppUser> _userManager;
-    private readonly ServiceManager _serviceManager;
+    private readonly IServiceManager _serviceManager;
 
     public MemberService(IGenericRepository<Member> memberRepository, UserManager<AppUser> userManager, 
-        ServiceManager serviceManager)
+        IServiceManager serviceManager)
     {
         _memberRepository = memberRepository;
         _userManager = userManager;
         _serviceManager = serviceManager;
     }
 
-    public async Task<StandardResponse<MemberResponse>> RegisterMemberAsync(CreateMemberParams createMemberParams)
+    public async Task<StandardResponse<string>>
+        RegisterMemberAsync(CreateMemberParams createMemberParams)
     {
         // Validate Age Restriction (18 - 70 years)
-        int age = DateTime.UtcNow.Year - createMemberParams.DateOfBirth.Value.Year;
+        int age = DateTime.UtcNow.Year - createMemberParams.dateOfBirth.Value.Year;
         if (age < 18 || age > 70)
         {
             string errorMsg = "Member age must be between 18 and 70 years.";
-            return StandardResponse<MemberResponse>.Failed(null, errorMsg);
+            return StandardResponse<string>.Failed(null, errorMsg);
         }
 
         // Check if Email Already Exists
         bool emailExists = await EmailExistsAsync(createMemberParams.userEmail!);
         if (emailExists)
-        { 
-           string errorMsg = "Email is already registered.";
-            return StandardResponse<MemberResponse>.Failed(null, errorMsg);
+        {
+            string errorMsg = "Email is already registered.";
+            return StandardResponse<string>.Failed(null, errorMsg);
         }
 
         // Save to Identity & DB
@@ -47,45 +49,127 @@ public sealed class MemberService : IMemberService
             FirstName = createMemberParams.FirstName,
             LastName = createMemberParams.LastName,
             Email = createMemberParams.userEmail,
-            PhoneNumber = createMemberParams.PhoneNumber,
+            PhoneNumber = createMemberParams.phoneNumber,
             EmployerId = createMemberParams.employerId,
-            DateOfBirth = createMemberParams.DateOfBirth.Value
+            DateOfBirth = createMemberParams.dateOfBirth.Value
         };
         string defaultPassword = GenerateRandomPassword();
-        var createUserResult = await _userManager.CreateAsync(member, defaultPassword); 
+        var createUserResult = await _userManager.CreateAsync(member, defaultPassword);
         //Send Email to User with default password
         if (!createUserResult.Succeeded)
         {
             string errorMsg = $"Failed to register member. {createUserResult.Errors.FirstOrDefault()}";
-            return StandardResponse<MemberResponse>.Failed(null, errorMsg);
+            return StandardResponse<string>.Failed(null, errorMsg);
         }
         await _memberRepository.AddAsync(member);
         await _memberRepository.SaveChangesAsync();
-        string? employerName = await _serviceManager.EmployerService.GetEmployerNameByIdAsync(member.EmployerId!);
-        var responseData = new MemberResponse(
-            member.Id, member.FirstName, member.LastName,
-            member.Email, member.PhoneNumber, employerName, member.DateOfBirth);
-        return StandardResponse<MemberResponse>.Success(responseData);
+
+        string successMsg = "Member successfully registered. Kindly check mail for other details.";
+        return StandardResponse<string>.Accepted(data: successMsg);
     }
 
-    public Task<StandardResponse<IEnumerable<MemberResponse>>> GetAllMembersAsync()
+    public async Task<StandardResponse<IEnumerable<MemberResponse>>>
+        GetAllMembersAsync()
     {
-        throw new NotImplementedException();
+        var members = await _memberRepository.GetAllNonDeleted()
+            .Include(mber => mber.Employer)
+            .Select(mbers => new MemberResponse(
+                mbers.Id, mbers.FirstName, mbers.LastName,
+                mbers.Email, mbers.PhoneNumber,
+                mbers.Employer!.CompanyName, mbers.DateOfBirth
+            ))
+            .AsNoTracking().ToListAsync();
+        return StandardResponse<IEnumerable<MemberResponse>>.Success(members);
     }
 
-    public Task<StandardResponse<MemberResponse>?> GetMemberByIdAsync(Guid memberId)
+    public async Task<StandardResponse<IEnumerable<MemberResponse>>>
+        GetEmployerMembers(string employerId)
     {
-        throw new NotImplementedException();
+        var members = await _memberRepository.GetNonDeletedByCondition(mber => mber.EmployerId == employerId)
+            .Include(mber => mber.Employer)
+            .Select(mber => new MemberResponse(
+                mber.Id, mber.FirstName, mber.LastName,
+                mber.Email, mber.PhoneNumber,
+                mber.Employer!.CompanyName, mber.DateOfBirth
+            )).AsNoTracking().ToListAsync();
+        return StandardResponse<IEnumerable<MemberResponse>>.Success(members);
     }
 
-    public Task<StandardResponse<string>> SoftDeleteMemberAsync(MemberResponse memberId)
+    public async Task<StandardResponse<MemberResponse>?> GetMemberByIdAsync(string memberId)
     {
-        throw new NotImplementedException();
+        var member = await _memberRepository.GetNonDeletedByCondition(mber => mber.Id == memberId)
+            .Include(mber => mber.Employer)
+            .Select(mber => new MemberResponse(
+                mber.Id, mber.FirstName, mber.LastName,
+                mber.Email, mber.PhoneNumber,
+                mber.Employer!.CompanyName, mber.DateOfBirth
+            )).AsNoTracking().FirstOrDefaultAsync();
+
+        return StandardResponse<MemberResponse>.Success(member);
     }
 
-    public Task<StandardResponse<string>> UpdateMemberAsync(UpdateMemberParams member)
+    public async Task<StandardResponse<string>> SoftDeleteMemberAsync(string memberId)
     {
-        throw new NotImplementedException();
+        var memberToDelete = _memberRepository.GetNonDeletedByCondition(mber => mber.Id == memberId)
+            .FirstOrDefault();
+        if (memberToDelete is null)
+        {
+            string errorMsg = "No data record found";
+            return StandardResponse<string>.Failed(errorMsg);
+        }
+        _memberRepository.SoftDelete(memberToDelete);
+        await _memberRepository.SaveChangesAsync();
+        string successMsg = "Record deleted successfuly";
+        return StandardResponse<string>.Success(data: successMsg, statusCode: 201);
+    }
+
+    public async Task<StandardResponse<string>> UpdateMemberAsync(UpdateMemberParams memberUpdateParams)
+    {
+        var memberToUpdate = _memberRepository.GetNonDeletedByCondition(mber => mber.Id == memberUpdateParams.MemberId)
+            .FirstOrDefault();
+        if(memberToUpdate is null)
+        {
+            string errorMsg = "No data record found for member";
+            return StandardResponse<String>.Failed(errorMsg);
+        }
+        if (ConfirmStringAdded(memberUpdateParams.FirstName))
+        {
+            memberToUpdate.FirstName = memberUpdateParams.FirstName;
+        }
+        if (ConfirmStringAdded(memberUpdateParams.LastName))
+        {
+            memberToUpdate.LastName = memberUpdateParams.LastName;
+        }
+        if (ConfirmStringAdded(memberUpdateParams.userEmail))
+        {            
+            // Check if Email Already Exists
+            bool emailExists = await EmailExistsAsync(memberUpdateParams.userEmail!);
+            if (emailExists)
+            {
+                string errorMsg = "Email is already registered.";
+                return StandardResponse<string>.Failed(null, errorMsg);
+            }
+            memberToUpdate.Email = memberUpdateParams.userEmail;
+        }
+        if (ConfirmStringAdded(memberUpdateParams.phoneNumber))
+        {
+            memberToUpdate.PhoneNumber = memberUpdateParams.phoneNumber;
+        }
+        if (memberUpdateParams.dateOfBirth.HasValue) 
+        {
+            // Validate Age Restriction (18 - 70 years)
+            int age = DateTime.UtcNow.Year - memberUpdateParams.dateOfBirth.Value.Year;
+            if (age < 18 || age > 70)
+            {
+                string errorMsg = "Member age must be between 18 and 70 years.";
+                return StandardResponse<string>.Failed(null, errorMsg);
+            }
+            memberToUpdate.DateOfBirth = memberUpdateParams.dateOfBirth;
+        }
+        await _memberRepository.SaveChangesAsync();
+
+        string? successMsg = "User updated Successfully";
+        return StandardResponse<string>.Success(successMsg);
     }
 
     private async Task<bool> EmailExistsAsync(string email)
@@ -96,5 +180,10 @@ public sealed class MemberService : IMemberService
     private string GenerateRandomPassword()
     {
         return Guid.NewGuid().ToString().Substring(0, 8);
+    }
+
+    private bool ConfirmStringAdded(string? stringValue)
+    {
+        return !string.IsNullOrWhiteSpace(stringValue);
     }
 }

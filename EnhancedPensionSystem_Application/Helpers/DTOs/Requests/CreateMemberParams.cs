@@ -5,7 +5,7 @@ public record CreateMemberParams
     string? FirstName,
     string? LastName,
     string? userEmail,
-    string? PhoneNumber,
+    string? phoneNumber,
     string? employerId,
-    DateTime? DateOfBirth
+    DateTime? dateOfBirth
 );

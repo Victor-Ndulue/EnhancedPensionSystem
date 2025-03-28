@@ -20,23 +20,21 @@ public sealed class GenericRepository<T> : IGenericRepository<T> where T : class
 
     public IQueryable<T> GetAll()
     {
-        return _dbSet.AsNoTracking();
+        return _dbSet;
     }
 
     public IQueryable<T>
         GetByCondition
         (Expression<Func<T, bool>> conditionExpression)
     {
-        return _dbSet.Where(conditionExpression)
-            .AsNoTracking();
+        return _dbSet.Where(conditionExpression);
     }
 
     public IQueryable<T>
         GetAllNonDeleted()
     {
         return _dbSet
-            .Where(t => !t.IsDeleted)
-            .AsNoTracking();
+            .Where(t => !t.IsDeleted);
     }
 
     public IQueryable<T>
@@ -44,8 +42,7 @@ public sealed class GenericRepository<T> : IGenericRepository<T> where T : class
         (Expression<Func<T, bool>> condition)
     {
         return _dbSet.Where(condition)
-            .Where(t => !t.IsDeleted)
-            .AsNoTracking();
+            .Where(t => !t.IsDeleted);
 
     }
 

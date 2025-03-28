@@ -20,4 +20,12 @@ public sealed class EmployerService : IEmployerService
             .Select(employer=>employer.CompanyName).FirstOrDefaultAsync();
         return employerName;
     }
+
+    public async Task<Dictionary<string, string>>
+        GetEmployersNameDictionaryAsync()
+    {
+        var employersNameDictionary = await _employerRepository.GetAllNonDeleted()
+            .ToDictionaryAsync(employer=>employer.Id, employer=>employer.CompanyName!);
+        return employersNameDictionary;
+    }
 }

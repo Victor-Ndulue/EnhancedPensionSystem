@@ -51,7 +51,7 @@ public class StandardResponse<T>
     /// <param name="data"></param>
     /// <param name="statusCode"></param>
     /// <returns></returns>
-    public static StandardResponse<T> Pending(T? data, string? message = "Accepted", int statusCode = 202)
+    public static StandardResponse<T> Accepted(T? data, string? message = "Accepted", int statusCode = 202)
     {
         return new StandardResponse<T> { Succeeded = true, Message = message, Data = data, StatusCode = statusCode };
     }

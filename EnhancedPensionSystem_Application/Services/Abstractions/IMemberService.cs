@@ -6,9 +6,10 @@ namespace EnhancedPensionSystem_Application.Services.Abstractions;
 
 public interface IMemberService
 {
-    Task<StandardResponse<MemberResponse>> RegisterMemberAsync(CreateMemberParams createMemberParams);
-    Task<StandardResponse<MemberResponse>?> GetMemberByIdAsync(Guid memberId);
+    Task<StandardResponse<string>> RegisterMemberAsync(CreateMemberParams createMemberParams);
+    Task<StandardResponse<MemberResponse>?> GetMemberByIdAsync(string memberId);
+    Task<StandardResponse<IEnumerable<MemberResponse>>> GetEmployerMembers(string employerId);
     Task<StandardResponse<IEnumerable<MemberResponse>>> GetAllMembersAsync();
     Task<StandardResponse<string>> UpdateMemberAsync(UpdateMemberParams member);
-    Task<StandardResponse<string>> SoftDeleteMemberAsync(MemberResponse memberId);
+    Task<StandardResponse<string>> SoftDeleteMemberAsync(string memberId);
 }

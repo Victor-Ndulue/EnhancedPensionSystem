@@ -2,10 +2,10 @@
 
 public record UpdateMemberParams
 (
-    Guid MemberId,
+    string? MemberId,
     string? FirstName,
     string? LastName,
     string? userEmail,
-    string? PhoneNumber,
-    DateTime? DateOfBirth
+    string? phoneNumber,
+    DateTime? dateOfBirth
 );
