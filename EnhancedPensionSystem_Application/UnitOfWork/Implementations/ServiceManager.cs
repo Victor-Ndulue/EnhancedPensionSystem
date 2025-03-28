@@ -22,18 +22,20 @@ public sealed class ServiceManager : IServiceManager
     public ServiceManager
         (
             IGenericRepository<Member> memberRepo,IGenericRepository<Employer> employerRepo,UserManager<Member> memberManager,
-            IGenericRepository<Contribution> contributionRepo, UserManager<Employer> employerManager
+            IGenericRepository<Contribution> contributionRepo, UserManager<Employer> employerManager,
+            IGenericRepository<Transaction> transactionRepo, IGenericRepository<BenefitEligibility> benefitEligibilityRepo,
+            IGenericRepository<Notification> notificationRepo
         )
     {
         _authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService());
         _memberService = new Lazy<IMemberService>(() => new MemberService(memberRepo, memberManager, this));
         _employerService = new Lazy<IEmployerService>(() => new EmployerService(employerRepo, employerManager));
         _contributionService = new Lazy<IContributionService>(()=> new ContributionService(contributionRepo, this));
-        _transactionService = new Lazy<ITransactionService>(()=> new TransactionService());
-        _benefitEligibilityService = new Lazy<IBenefitEligibilityService>(()=> new BenefitEligibilityService());
-        _notificationService = new Lazy<INotificationService>(() => new NotificationService()); ;
+        _transactionService = new Lazy<ITransactionService>(()=> new TransactionService(transactionRepo));
+        _benefitEligibilityService = new Lazy<IBenefitEligibilityService>(()=> new BenefitEligibilityService(benefitEligibilityRepo, this));
+        _notificationService = new Lazy<INotificationService>(() => new NotificationService(notificationRepo)); ;
         _emailService = new Lazy<IEmailService>(() => new EmailService()); ;
-        _backgroundJobService = new Lazy<IBackgroundJobService>(() => new BackgroundJobService()); ;
+        _backgroundJobService = new Lazy<IBackgroundJobService>(() => new BackgroundJobService(contributionRepo, this)); ;
     }
 
     public IAuthenticationService AuthenticationService => _authenticationService.Value;
