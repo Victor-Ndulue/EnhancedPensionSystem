@@ -10,4 +10,8 @@
     <PackageReference Include="FluentValidation" Version="11.11.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EnhancedPensionSystem_Infrastructure\EnhancedPensionSystem_Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
