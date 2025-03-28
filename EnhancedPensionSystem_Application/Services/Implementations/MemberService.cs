@@ -3,6 +3,7 @@ using EnhancedPensionSystem_Application.Helpers.DTOs.Responses;
 using EnhancedPensionSystem_Application.Helpers.ObjectFormatter;
 using EnhancedPensionSystem_Application.Services.Abstractions;
 using EnhancedPensionSystem_Application.UnitOfWork.Abstraction;
+using EnhancedPensionSystem_Domain.Enums;
 using EnhancedPensionSystem_Domain.Models;
 using EnhancedPensionSystem_Infrastructure.Repository.Implementations;
 using Microsoft.AspNetCore.Identity;
@@ -13,10 +14,10 @@ namespace EnhancedPensionSystem_Application.Services.Implementations;
 public sealed class MemberService : IMemberService
 {
     private readonly IGenericRepository<Member> _memberRepository;
-    private readonly UserManager<AppUser> _userManager;
+    private readonly UserManager<Member> _userManager;
     private readonly IServiceManager _serviceManager;
 
-    public MemberService(IGenericRepository<Member> memberRepository, UserManager<AppUser> userManager, 
+    public MemberService(IGenericRepository<Member> memberRepository, UserManager<Member> userManager, 
         IServiceManager serviceManager)
     {
         _memberRepository = memberRepository;
@@ -49,20 +50,21 @@ public sealed class MemberService : IMemberService
             FirstName = createMemberParams.FirstName,
             LastName = createMemberParams.LastName,
             Email = createMemberParams.userEmail,
+            UserName = createMemberParams.userEmail,
             PhoneNumber = createMemberParams.phoneNumber,
             EmployerId = createMemberParams.employerId,
-            DateOfBirth = createMemberParams.dateOfBirth.Value
+            DateOfBirth = createMemberParams.dateOfBirth.Value,
+            AppUserType = AppUserType.Member
         };
         string defaultPassword = GenerateRandomPassword();
         var createUserResult = await _userManager.CreateAsync(member, defaultPassword);
-        //Send Email to User with default password
         if (!createUserResult.Succeeded)
         {
             string errorMsg = $"Failed to register member. {createUserResult.Errors.FirstOrDefault()}";
             return StandardResponse<string>.Failed(null, errorMsg);
         }
-        await _memberRepository.AddAsync(member);
-        await _memberRepository.SaveChangesAsync();
+
+        //Send Email to User with default password
 
         string successMsg = "Member successfully registered. Kindly check mail for other details.";
         return StandardResponse<string>.Accepted(data: successMsg);
@@ -170,6 +172,11 @@ public sealed class MemberService : IMemberService
 
         string? successMsg = "User updated Successfully";
         return StandardResponse<string>.Success(successMsg);
+    }
+
+    public async Task<bool> ConfirmMemberExists(string? memberId)
+    {
+        return await _memberRepository.ExistsByConditionAsync(m => m.Id == memberId);       
     }
 
     private async Task<bool> EmailExistsAsync(string email)

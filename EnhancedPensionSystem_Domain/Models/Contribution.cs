@@ -4,9 +4,9 @@ namespace EnhancedPensionSystem_Domain.Models;
 
 public class Contribution: BaseEntity
 {
-    public Guid MemberId { get; private set; }
-    public Member? Member { get; private set; }
-    public decimal Amount { get; private set; }
-    public DateTime ContributionDate { get; private set; }
-    public ContributionType Type { get; private set; }
+    public string? MemberId { get; set; }
+    public Member? Member { get; set; }
+    public decimal Amount { get; set; }
+    public DateTime ContributionDate { get; set; }
+    public ContributionType ContributionType { get; set; }
 }

@@ -19,14 +19,16 @@ public sealed class ServiceManager : IServiceManager
     private readonly Lazy<IEmailService> _emailService;
     private readonly Lazy<IBackgroundJobService> _backgroundJobService;
 
-    public ServiceManager(IGenericRepository<Member> memberRepository,
-        IGenericRepository<Employer> employerRepository,
-        UserManager<AppUser> userManager)
+    public ServiceManager
+        (
+            IGenericRepository<Member> memberRepo,IGenericRepository<Employer> employerRepo,UserManager<Member> memberManager,
+            IGenericRepository<Contribution> contributionRepo, UserManager<Employer> employerManager
+        )
     {
         _authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService());
-        _memberService = new Lazy<IMemberService>(() => new MemberService(memberRepository, userManager, this));
-        _employerService = new Lazy<IEmployerService>(() => new EmployerService(employerRepository));
-        _contributionService = new Lazy<IContributionService>(()=> new ContributionService());
+        _memberService = new Lazy<IMemberService>(() => new MemberService(memberRepo, memberManager, this));
+        _employerService = new Lazy<IEmployerService>(() => new EmployerService(employerRepo, employerManager));
+        _contributionService = new Lazy<IContributionService>(()=> new ContributionService(contributionRepo, this));
         _transactionService = new Lazy<ITransactionService>(()=> new TransactionService());
         _benefitEligibilityService = new Lazy<IBenefitEligibilityService>(()=> new BenefitEligibilityService());
         _notificationService = new Lazy<INotificationService>(() => new NotificationService()); ;

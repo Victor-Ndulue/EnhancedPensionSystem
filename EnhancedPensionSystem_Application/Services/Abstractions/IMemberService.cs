@@ -12,4 +12,5 @@ public interface IMemberService
     Task<StandardResponse<IEnumerable<MemberResponse>>> GetAllMembersAsync();
     Task<StandardResponse<string>> UpdateMemberAsync(UpdateMemberParams member);
     Task<StandardResponse<string>> SoftDeleteMemberAsync(string memberId);
+    Task<bool> ConfirmMemberExists(string? memberId);
 }
