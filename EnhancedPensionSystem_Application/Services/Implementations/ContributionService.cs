@@ -14,14 +14,19 @@ public sealed class ContributionService : IContributionService
 {
     private readonly IGenericRepository<Contribution> _contributionRepository;
     private readonly IMemberService _memberService;
+    private readonly ITransactionService _transactionService;
+    private readonly INotificationService _notificationService;
 
     public ContributionService(IGenericRepository<Contribution> contributionRepository, IServiceManager serviceManager)
     {
         _contributionRepository = contributionRepository;
         _memberService = serviceManager.MemberService;
+        _transactionService = serviceManager.TransactionService;
+        _notificationService = serviceManager.NotificationService;
     }
 
-    public async Task<StandardResponse<string>> AddContributionAsync(AddContributionParams contributionParams)
+    public async Task<StandardResponse<string>> 
+        AddContributionAsync(AddContributionParams contributionParams)
     {
         // Validate Member Exists
         var memberExists = await _memberService.ConfirmMemberExists(contributionParams.MemberId);
@@ -53,7 +58,6 @@ public sealed class ContributionService : IContributionService
                 return StandardResponse<string>.Failed(errorMsg);
             }
         }
-
         // Save Contribution
         var contribution = new Contribution
         {
@@ -62,14 +66,26 @@ public sealed class ContributionService : IContributionService
             ContributionDate = contributionParams.ContributionDate!.Value,
             ContributionType = contributionParams.Type
         };
-
         await _contributionRepository.AddAsync(contribution);
-        await _contributionRepository.SaveChangesAsync();
+
+        string notificationMsg = $"Contribution for the month {contribution.ContributionDate.Month} received.";
+        var notification = new NotificationParams(contributionParams.MemberId, notificationMsg, NotificationType.ContributionReceived);
+        await _notificationService.CreateNotificationAsync(notification);
+
+        await _transactionService.AddTransactionAsync(new AddTransactionParams
+            (
+                contributionParams.MemberId,
+                contribution.Id,
+                contributionParams.Amount.Value,
+                contributionParams.Type,
+                TransactionStatus.Successful
+            )); //Contribustion persisted on Db via one save at the Transaction Servoce
 
         return StandardResponse<string>.Success("Contribution successfully added.");
     }
 
-    public async Task<StandardResponse<IEnumerable<ContributionResponse>>> GetAllContributionsAsync()
+    public async Task<StandardResponse<IEnumerable<ContributionResponse>>> 
+        GetAllContributionsAsync()
     {
         var contributions = await _contributionRepository.GetAllNonDeleted()
             .Select(c => new ContributionResponse(c.Id, c.MemberId, c.Amount, c.ContributionDate, c.ContributionType))
@@ -78,7 +94,8 @@ public sealed class ContributionService : IContributionService
         return StandardResponse<IEnumerable<ContributionResponse>>.Success(contributions);
     }
 
-    public async Task<StandardResponse<IEnumerable<ContributionResponse>>> GetMemberContributionsAsync(string memberId)
+    public async Task<StandardResponse<IEnumerable<ContributionResponse>>> 
+        GetMemberContributionsAsync(string memberId)
     {
         var contributions = await _contributionRepository.GetNonDeletedByCondition(c => c.MemberId == memberId)
             .Select(c => new ContributionResponse(c.Id, c.MemberId, c.Amount, c.ContributionDate, c.ContributionType))
@@ -87,7 +104,8 @@ public sealed class ContributionService : IContributionService
         return StandardResponse<IEnumerable<ContributionResponse>>.Success(contributions);
     }
 
-    public async Task<StandardResponse<TotalContributionResponse>> GetTotalContributionsAsync(string memberId)
+    public async Task<StandardResponse<TotalContributionResponse>> 
+        GetTotalContributionsAsync(string memberId)
     {
         var contributions = await _contributionRepository.GetNonDeletedByCondition(c => c.MemberId == memberId)
             .GroupBy(c => c.ContributionType)

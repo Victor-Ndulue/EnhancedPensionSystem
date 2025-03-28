@@ -2,4 +2,8 @@
 
 public interface IBackgroundJobService
 {
+    Task ValidateContributionsAsync();
+    Task CheckBenefitEligibilityAsync();
+    Task CalculateInterestAsync();
+    Task SendNotificationsAsync();
 }
