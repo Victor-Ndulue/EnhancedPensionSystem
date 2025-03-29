@@ -1,13 +1,15 @@
 using EnhancedPensionSystem_Application.Services.Abstractions;
 using EnhancedPensionSystem_WebAPP.Extensions;
-using FluentValidation.AspNetCore;
+using EnhancedPensionSystem_WebAPP.LoggerConfig;
 using Hangfire;
 
+LogConfigurator.ConfigureLogger();
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.RegisterFluentValidation();
+builder.Services.ConfigureUserIdentityManager();
 builder.Services.RegisterDbContext(builder.Configuration);
 builder.Services.RegisterUnitOfWork();
 builder.Services.ConfigureHangfire();
@@ -27,7 +29,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapHangfireDashboard("/background-jobs", HangfireAuthorizationFilter.GetHangfireDashboardOptions(builder.Configuration));
 

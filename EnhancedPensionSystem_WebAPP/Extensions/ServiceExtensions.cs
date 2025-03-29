@@ -3,11 +3,13 @@ using EnhancedPensionSystem_Application.Helpers.DTOValidations;
 using EnhancedPensionSystem_Application.Helpers.ObjectFormatter;
 using EnhancedPensionSystem_Application.UnitOfWork.Abstraction;
 using EnhancedPensionSystem_Application.UnitOfWork.Implementations;
+using EnhancedPensionSystem_Domain.Models;
 using EnhancedPensionSystem_Infrastructure.DataContext;
 using EnhancedPensionSystem_Infrastructure.Repository.Implementations;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hangfire;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -16,6 +18,24 @@ namespace EnhancedPensionSystem_WebAPP.Extensions;
 
 public static class ServiceExtensions
 {
+    public static void
+        ConfigureUserIdentityManager
+        (this IServiceCollection services)
+    {
+        services.AddIdentity<AppUser, IdentityRole>(o =>
+        {
+            o.Password.RequireDigit = false;
+            o.Password.RequireLowercase = false;
+            o.Password.RequireUppercase = false;
+            o.Password.RequireNonAlphanumeric = false;
+            o.Password.RequiredLength = 8;
+            o.Password.RequiredUniqueChars = 0;
+            o.User.RequireUniqueEmail = true;
+        })
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+        services.AddScoped<UserManager<AppUser>>();
+    }
 
     public static void
         ConfigureController
