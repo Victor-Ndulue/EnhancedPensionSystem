@@ -6,7 +6,8 @@ namespace EnhancedPensionSystem_Application.Services.Abstractions;
 
 public interface IEmployerService
 {
-    Task<string?> GetEmployerNameByIdAsync(string employerId);
+    Task<bool> ConfirmEmployerExistsAsync(string? employerId);
+    Task<string?> GetEmployerNameByIdAsync(string? employerId);
     Task<Dictionary<string, string>> GetEmployersNameDictionaryAsync();
     Task<StandardResponse<string>> RegisterEmployerAsync(CreateEmployerParams createEmployerParams);
     Task<StandardResponse<IEnumerable<EmployerResponse>>> GetAllEmployersAsync();

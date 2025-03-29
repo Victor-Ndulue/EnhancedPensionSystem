@@ -15,19 +15,25 @@ public sealed class MemberService : IMemberService
 {
     private readonly IGenericRepository<Member> _memberRepository;
     private readonly UserManager<Member> _userManager;
-    private readonly IServiceManager _serviceManager;
+    private readonly IEmployerService _employerService;
 
     public MemberService(IGenericRepository<Member> memberRepository, UserManager<Member> userManager, 
         IServiceManager serviceManager)
     {
         _memberRepository = memberRepository;
         _userManager = userManager;
-        _serviceManager = serviceManager;
+        _employerService = serviceManager.EmployerService;
     }
 
     public async Task<StandardResponse<string>>
         RegisterMemberAsync(CreateMemberParams createMemberParams)
     {
+        var employerExists = await _employerService.ConfirmEmployerExistsAsync(createMemberParams.employerId);
+        if (!employerExists)
+        {
+            string errorMsg = "Member does not match any employer. Confirm employer Id";
+            return StandardResponse<string>.Failed(errorMsg);
+        }
         // Validate Age Restriction (18 - 70 years)
         int age = DateTime.UtcNow.Year - createMemberParams.dateOfBirth.Value.Year;
         if (age < 18 || age > 70)

@@ -21,7 +21,14 @@ public sealed class EmployerService : IEmployerService
         _userManager = userManager;
     }
 
-    public async Task<string?> GetEmployerNameByIdAsync(string employerId)
+    public async Task<bool> 
+        ConfirmEmployerExistsAsync (string? employerId)
+    {
+        return await _employerRepository.ExistsByConditionAsync(e=>e.Id == employerId);  
+    }
+
+    public async Task<string?> 
+        GetEmployerNameByIdAsync(string? employerId)
     {
         string? employerName = await _employerRepository.GetNonDeletedByCondition(employer => employer.Id == employerId)
             .Select(employer=>employer.CompanyName).FirstOrDefaultAsync();
@@ -34,10 +41,10 @@ public sealed class EmployerService : IEmployerService
         var employersNameDictionary = await _employerRepository.GetAllNonDeleted()
             .ToDictionaryAsync(employer => employer.Id, employer => employer.CompanyName!);
         return employersNameDictionary;
-    }
-       
+    }       
 
-    public async Task<StandardResponse<IEnumerable<EmployerResponse>>> GetAllEmployersAsync()
+    public async Task<StandardResponse<IEnumerable<EmployerResponse>>> 
+        GetAllEmployersAsync()
     {
         var employers = await _employerRepository.GetAllNonDeleted()
             .Select(e => new EmployerResponse
@@ -50,7 +57,8 @@ public sealed class EmployerService : IEmployerService
         return StandardResponse<IEnumerable<EmployerResponse>>.Success(employers);
     }
 
-    public async Task<StandardResponse<EmployerResponse>> GetEmployerByIdAsync(string employerId)
+    public async Task<StandardResponse<EmployerResponse>> 
+        GetEmployerByIdAsync(string employerId)
     {
         var employerResponse = await _employerRepository.GetNonDeletedByCondition(e=>e.Id == employerId)
             .Select(employer=> new EmployerResponse
@@ -63,7 +71,8 @@ public sealed class EmployerService : IEmployerService
         return StandardResponse<EmployerResponse>.Success(employerResponse);
     } 
 
-    public async Task<StandardResponse<string>> RegisterEmployerAsync(CreateEmployerParams createEmployerParams)
+    public async Task<StandardResponse<string>> 
+        RegisterEmployerAsync(CreateEmployerParams createEmployerParams)
     {
         // Validate Company Name & Registration Number
         if (string.IsNullOrWhiteSpace(createEmployerParams.companyName)){
@@ -110,7 +119,8 @@ public sealed class EmployerService : IEmployerService
         return StandardResponse<string>.Accepted(data: successMsg);
     }
 
-    public async Task<StandardResponse<string>> SoftDeleteEmployerAsync(string employerId)
+    public async Task<StandardResponse<string>> 
+        SoftDeleteEmployerAsync(string employerId)
     {
         var employer = await _employerRepository.GetNonDeletedByCondition(e=>e.Id == employerId)
             .FirstOrDefaultAsync();
@@ -126,7 +136,8 @@ public sealed class EmployerService : IEmployerService
         return StandardResponse<string>.Accepted("Employer deleted successfully.");
     }
 
-    public async Task<StandardResponse<string>> UpdateEmployerAsync(UpdateEmployerParams updateEmployerParams)
+    public async Task<StandardResponse<string>> 
+        UpdateEmployerAsync(UpdateEmployerParams updateEmployerParams)
     {
         var employer = await _employerRepository.GetNonDeletedByCondition(e=> e.Id == updateEmployerParams.employerId)
             .FirstOrDefaultAsync();
@@ -145,7 +156,8 @@ public sealed class EmployerService : IEmployerService
         return StandardResponse<string>.Success("Employer details updated successfully.");
     }
 
-    public async Task<StandardResponse<string>> DeactivateEmployer(string employerId)
+    public async Task<StandardResponse<string>> 
+        DeactivateEmployer(string employerId)
     {
         var employer = await _employerRepository.GetNonDeletedByCondition(e => e.Id == employerId)
             .FirstOrDefaultAsync();
@@ -160,7 +172,8 @@ public sealed class EmployerService : IEmployerService
         return StandardResponse<string>.Success("Employer deactivated successfully.");
     }
 
-    public async Task<StandardResponse<string>> ActivateEmployer(string employerId)
+    public async Task<StandardResponse<string>> 
+        ActivateEmployer(string employerId)
     {
         var employer = await _employerRepository.GetNonDeletedByCondition(e => e.Id == employerId)
             .FirstOrDefaultAsync();
@@ -175,7 +188,8 @@ public sealed class EmployerService : IEmployerService
         return StandardResponse<string>.Success("Employer activated successfully.");
     }
 
-    private string GenerateRandomPassword()
+    private string 
+        GenerateRandomPassword()
     {
         return Guid.NewGuid().ToString().Substring(0, 8);
     }
