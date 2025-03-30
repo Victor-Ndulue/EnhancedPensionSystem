@@ -28,6 +28,15 @@ public static class ServiceExtensions
         services.Configure<EmailConfig>(configuration);
     }
 
+    /*var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+    if (File.Exists(xmlPath))
+    {
+        options.IncludeXmlComments(xmlPath);
+    }
+});*/
+
     public static void 
         ConfigureSwaggerDocumentations(this IServiceCollection services)
     {

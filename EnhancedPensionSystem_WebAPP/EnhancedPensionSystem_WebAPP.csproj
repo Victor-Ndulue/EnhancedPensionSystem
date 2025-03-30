@@ -1,11 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>C:\Users\Victor Ndulue\OneDrive\My Repo\EnhancedPensionSystem\EnhancedPensionSystem_WebAPP\Controllers\APIDocumentation.xml</DocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<NoWarn>$(NoWarn);1591</NoWarn>
+	<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\APIDocumentation.xml</DocumentationFile>
     <UserSecretsId>31cfe18c-3179-4dc8-aa5c-0322548b738d</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
