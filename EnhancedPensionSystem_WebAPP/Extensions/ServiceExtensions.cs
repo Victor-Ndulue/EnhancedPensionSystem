@@ -22,7 +22,7 @@ public static class ServiceExtensions
         ConfigureUserIdentityManager
         (this IServiceCollection services)
     {
-        services.AddIdentity<AppUser, IdentityRole>(o =>
+        services.AddIdentity<Employer, IdentityRole>(o =>
         {
             o.Password.RequireDigit = false;
             o.Password.RequireLowercase = false;
@@ -34,7 +34,20 @@ public static class ServiceExtensions
         })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-        services.AddScoped<UserManager<AppUser>>();
+        services.AddIdentity<Member, IdentityRole>(o =>
+        {
+            o.Password.RequireDigit = false;
+            o.Password.RequireLowercase = false;
+            o.Password.RequireUppercase = false;
+            o.Password.RequireNonAlphanumeric = false;
+            o.Password.RequiredLength = 8;
+            o.Password.RequiredUniqueChars = 0;
+            o.User.RequireUniqueEmail = true;
+        })
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+        services.AddScoped<UserManager<Member>>();
+        services.AddScoped<UserManager<Employer>>();
     }
 
     public static void
@@ -73,8 +86,6 @@ public static class ServiceExtensions
         RegisterFluentValidation
         (this IServiceCollection services)
     {
-        services.RegisterFluentValidation();
-        services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining<UpdateTransactionStatusParamsValidator>();
     }
 

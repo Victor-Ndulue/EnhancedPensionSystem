@@ -1,6 +1,7 @@
 using EnhancedPensionSystem_Application.Services.Abstractions;
 using EnhancedPensionSystem_WebAPP.Extensions;
 using EnhancedPensionSystem_WebAPP.LoggerConfig;
+using FluentValidation.AspNetCore;
 using Hangfire;
 
 LogConfigurator.ConfigureLogger();
@@ -9,11 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.RegisterFluentValidation();
-builder.Services.ConfigureUserIdentityManager();
-builder.Services.RegisterDbContext(builder.Configuration);
-builder.Services.RegisterUnitOfWork();
-builder.Services.ConfigureHangfire();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.RegisterFluentValidation();
 builder.Services.RegisterGenericRepo();
+builder.Services.ConfigureUserIdentityManager();
+builder.Services.RegisterUnitOfWork();
+builder.Services.RegisterDbContext(builder.Configuration);
+builder.Services.ConfigureHangfire();
 builder.Services.ConfigureController();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

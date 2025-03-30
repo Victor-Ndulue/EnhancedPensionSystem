@@ -29,7 +29,7 @@ public sealed class ContributionService : IContributionService
         AddContributionAsync(AddContributionParams contributionParams)
     {
         // Validate Member Exists
-        var memberExists = await _memberService.ConfirmMemberExists(contributionParams.MemberId);
+        var memberExists = await _memberService.ConfirmMemberExists(contributionParams.memberId);
         if (!memberExists)
         {
             string errorMsg = "Member not found";
@@ -37,19 +37,19 @@ public sealed class ContributionService : IContributionService
         }
 
         // Validate Contribution Amount
-        if (contributionParams.Amount <= 0)
+        if (contributionParams.amount <= 0)
         {
             string? errorMsg = "Contribution amount must be greater than 0.00.";
             return StandardResponse<string>.Failed(errorMsg);
         }
 
         // Check if Monthly Contribution Already Exists
-        if (contributionParams.Type == ContributionType.Monthly)
+        if (contributionParams.type == ContributionType.Monthly)
         {
             var monthExists = await _contributionRepository.ExistsByConditionAsync(c =>
-                c.MemberId == contributionParams.MemberId &&
-                c.ContributionDate.Year == contributionParams.ContributionDate!.Value.Year &&
-                c.ContributionDate.Month == contributionParams.ContributionDate.Value.Month &&
+                c.MemberId == contributionParams.memberId &&
+                c.ContributionDate.Year == contributionParams.contributionDate!.Value.Year &&
+                c.ContributionDate.Month == contributionParams.contributionDate.Value.Month &&
                 c.ContributionType == ContributionType.Monthly);
 
             if (monthExists)
@@ -61,23 +61,23 @@ public sealed class ContributionService : IContributionService
         // Save Contribution
         var contribution = new Contribution
         {
-            MemberId = contributionParams.MemberId,
-            Amount = contributionParams.Amount!.Value,
-            ContributionDate = contributionParams.ContributionDate!.Value,
-            ContributionType = contributionParams.Type
+            MemberId = contributionParams.memberId,
+            Amount = contributionParams.amount!.Value,
+            ContributionDate = contributionParams.contributionDate!.Value,
+            ContributionType = contributionParams.type
         };
         await _contributionRepository.AddAsync(contribution);
 
         string notificationMsg = $"Contribution for the month {contribution.ContributionDate.Month} received.";
-        var notification = new NotificationParams(contributionParams.MemberId, notificationMsg, NotificationType.ContributionReceived);
+        var notification = new NotificationParams(contributionParams.memberId, notificationMsg, NotificationType.ContributionReceived);
         await _notificationService.CreateNotificationAsync(notification);
 
         await _transactionService.AddTransactionAsync(new AddTransactionParams
             (
-                contributionParams.MemberId,
+                contributionParams.memberId,
                 contribution.Id,
-                contributionParams.Amount.Value,
-                contributionParams.Type,
+                contributionParams.amount.Value,
+                contributionParams.type,
                 TransactionStatus.Successful
             )); //Contribustion persisted on Db via one save at the Transaction Servoce
 
