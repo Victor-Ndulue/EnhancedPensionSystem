@@ -13,9 +13,9 @@ namespace EnhancedPensionSystem_Application.Services.Implementations;
 public sealed class EmployerService : IEmployerService
 {
     private readonly IGenericRepository<Employer> _employerRepository;
-    private readonly UserManager<Employer> _userManager;
+    private readonly UserManager<AppUser> _userManager;
 
-    public EmployerService(IGenericRepository<Employer> employerRepository, UserManager<Employer> userManager)
+    public EmployerService(IGenericRepository<Employer> employerRepository, UserManager<AppUser> userManager)
     {
         _employerRepository = employerRepository;
         _userManager = userManager;

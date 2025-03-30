@@ -54,7 +54,7 @@ public sealed class AppDbContext:IdentityDbContext<AppUser>
         }
     }
 
-    public DbSet<Contribution> Members { get; set; }
+    public DbSet<Member> Members { get; set; }
     public DbSet<Employer> Employers { get; set; }
     public DbSet<Contribution> Contributions { get; set; }
     public DbSet<BenefitEligibility> BenefitEligibilities { get; set; }

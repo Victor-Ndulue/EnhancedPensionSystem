@@ -8,7 +8,7 @@ public interface IMemberService
 {
     Task<StandardResponse<string>> RegisterMemberAsync(CreateMemberParams createMemberParams);
     Task<StandardResponse<MemberResponse>?> GetMemberByIdAsync(string memberId);
-    Task<StandardResponse<IEnumerable<MemberResponse>>> GetEmployerMembers(string employerId);
+    Task<StandardResponse<IEnumerable<MemberResponse>>> GetEmployerMembersAsync(string employerId);
     Task<StandardResponse<IEnumerable<MemberResponse>>> GetAllMembersAsync();
     Task<StandardResponse<string>> UpdateMemberAsync(UpdateMemberParams member);
     Task<StandardResponse<string>> SoftDeleteMemberAsync(string memberId);

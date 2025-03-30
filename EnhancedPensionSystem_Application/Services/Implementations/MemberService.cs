@@ -14,10 +14,10 @@ namespace EnhancedPensionSystem_Application.Services.Implementations;
 public sealed class MemberService : IMemberService
 {
     private readonly IGenericRepository<Member> _memberRepository;
-    private readonly UserManager<Member> _userManager;
+    private readonly UserManager<AppUser> _userManager;
     private readonly IEmployerService _employerService;
 
-    public MemberService(IGenericRepository<Member> memberRepository, UserManager<Member> userManager, 
+    public MemberService(IGenericRepository<Member> memberRepository, UserManager<AppUser> userManager, 
         IServiceManager serviceManager)
     {
         _memberRepository = memberRepository;
@@ -91,7 +91,7 @@ public sealed class MemberService : IMemberService
     }
 
     public async Task<StandardResponse<IEnumerable<MemberResponse>>>
-        GetEmployerMembers(string employerId)
+        GetEmployerMembersAsync(string employerId)
     {
         var members = await _memberRepository.GetNonDeletedByCondition(mber => mber.EmployerId == employerId)
             .Include(mber => mber.Employer)

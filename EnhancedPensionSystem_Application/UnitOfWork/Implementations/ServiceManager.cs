@@ -21,15 +21,15 @@ public sealed class ServiceManager : IServiceManager
 
     public ServiceManager
         (
-            IGenericRepository<Member> memberRepo,IGenericRepository<Employer> employerRepo,UserManager<Member> memberManager,
-            IGenericRepository<Contribution> contributionRepo, UserManager<Employer> employerManager,
-            IGenericRepository<Transaction> transactionRepo, IGenericRepository<BenefitEligibility> benefitEligibilityRepo,
+            IGenericRepository<Member> memberRepo,IGenericRepository<Employer> employerRepo,UserManager<AppUser> userManager,
+            IGenericRepository<Contribution> contributionRepo, IGenericRepository<Transaction> transactionRepo, 
+            IGenericRepository<BenefitEligibility> benefitEligibilityRepo,
             IGenericRepository<Notification> notificationRepo
         )
     {
         _authenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService());
-        _memberService = new Lazy<IMemberService>(() => new MemberService(memberRepo, memberManager, this));
-        _employerService = new Lazy<IEmployerService>(() => new EmployerService(employerRepo, employerManager));
+        _memberService = new Lazy<IMemberService>(() => new MemberService(memberRepo, userManager, this));
+        _employerService = new Lazy<IEmployerService>(() => new EmployerService(employerRepo, userManager));
         _contributionService = new Lazy<IContributionService>(()=> new ContributionService(contributionRepo, this));
         _transactionService = new Lazy<ITransactionService>(()=> new TransactionService(transactionRepo));
         _benefitEligibilityService = new Lazy<IBenefitEligibilityService>(()=> new BenefitEligibilityService(benefitEligibilityRepo, this));

@@ -46,7 +46,7 @@ public class ContributionsController : BaseController
     /// <response code="200">Successfully retrieved the contribution breakdown.</response>
     /// <response code="400">Invalid member ID provided.</response>
     /// <response code="404">Member contributions not found.</response>
-    [HttpPost("member-contribution-breakdown")]
+    [HttpGet("member-contribution-breakdown")]
     public async Task<IActionResult> GetMemberContributionsAsync([FromQuery] string memberId)
     {
         var result = await _contributionService.GetMemberContributionsAsync(memberId);

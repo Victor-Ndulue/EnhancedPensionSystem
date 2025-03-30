@@ -1,8 +1,10 @@
 using EnhancedPensionSystem_Application.Services.Abstractions;
 using EnhancedPensionSystem_WebAPP.Extensions;
 using EnhancedPensionSystem_WebAPP.LoggerConfig;
+using EnhancedPensionSystem_WebAPP.Middlewares;
 using FluentValidation.AspNetCore;
 using Hangfire;
+using Microsoft.Extensions.Options;
 
 LogConfigurator.ConfigureLogger();
 var builder = WebApplication.CreateBuilder(args);
@@ -20,16 +22,14 @@ builder.Services.ConfigureHangfire();
 builder.Services.ConfigureController();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.ConfigureSwaggerDocumentations();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
@@ -42,4 +42,5 @@ RecurringJob.AddOrUpdate<IBackgroundJobService>(x => x.CheckBenefitEligibilityAs
 RecurringJob.AddOrUpdate<IBackgroundJobService>(x => x.CalculateInterestAsync(), Cron.Monthly);
 RecurringJob.AddOrUpdate<IBackgroundJobService>(x => x.SendNotificationsAsync(), Cron.MinuteInterval(30));
 
+app.ConfigureExceptionHandler();
 app.Run();

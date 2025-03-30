@@ -12,17 +12,30 @@ using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text.Json.Serialization;
 
 namespace EnhancedPensionSystem_WebAPP.Extensions;
 
 public static class ServiceExtensions
 {
-    public static void
-        ConfigureUserIdentityManager
-        (this IServiceCollection services)
+    public static void 
+        ConfigureSwaggerDocumentations(this IServiceCollection services)
     {
-        services.AddIdentity<Employer, IdentityRole>(o =>
+        services.AddSwaggerGen(opts => {
+            string basePath = Directory.GetCurrentDirectory();
+            string controllersPath = Path.Combine(basePath, "Controllers");
+            var xmlFile = "APIDocumentation.xml";
+            var xmlPath = Path.Combine(controllersPath, xmlFile);
+            var documentationPath = Path.GetFullPath(xmlPath);
+            opts.IncludeXmlComments(documentationPath);
+        });
+    }
+
+    public static void 
+        ConfigureUserIdentityManager(this IServiceCollection services)
+    {
+        services.AddIdentity<AppUser, IdentityRole>(o =>
         {
             o.Password.RequireDigit = false;
             o.Password.RequireLowercase = false;
@@ -32,22 +45,10 @@ public static class ServiceExtensions
             o.Password.RequiredUniqueChars = 0;
             o.User.RequireUniqueEmail = true;
         })
-            .AddEntityFrameworkStores<AppDbContext>()
-            .AddDefaultTokenProviders();
-        services.AddIdentity<Member, IdentityRole>(o =>
-        {
-            o.Password.RequireDigit = false;
-            o.Password.RequireLowercase = false;
-            o.Password.RequireUppercase = false;
-            o.Password.RequireNonAlphanumeric = false;
-            o.Password.RequiredLength = 8;
-            o.Password.RequiredUniqueChars = 0;
-            o.User.RequireUniqueEmail = true;
-        })
-            .AddEntityFrameworkStores<AppDbContext>()
-            .AddDefaultTokenProviders();
-        services.AddScoped<UserManager<Member>>();
-        services.AddScoped<UserManager<Employer>>();
+        .AddEntityFrameworkStores<AppDbContext>()
+        .AddDefaultTokenProviders();
+
+        services.AddScoped<UserManager<AppUser>>();
     }
 
     public static void
