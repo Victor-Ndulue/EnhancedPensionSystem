@@ -16,6 +16,8 @@ public sealed class MemberService : IMemberService
     private readonly IGenericRepository<Member> _memberRepository;
     private readonly UserManager<AppUser> _userManager;
     private readonly IEmployerService _employerService;
+    private readonly IEmailService _emailService;
+    private readonly string? senderEmail = Environment.GetEnvironmentVariable("senderEmail");
 
     public MemberService(IGenericRepository<Member> memberRepository, UserManager<AppUser> userManager, 
         IServiceManager serviceManager)
@@ -23,13 +25,14 @@ public sealed class MemberService : IMemberService
         _memberRepository = memberRepository;
         _userManager = userManager;
         _employerService = serviceManager.EmployerService;
+        _emailService = serviceManager.EmailService;
     }
 
     public async Task<StandardResponse<string>>
         RegisterMemberAsync(CreateMemberParams createMemberParams)
     {
-        var employerExists = await _employerService.ConfirmEmployerExistsAsync(createMemberParams.employerId);
-        if (!employerExists)
+        var employerName = await _employerService.GetEmployerNameByIdAsync(createMemberParams.employerId);
+        if (!ConfirmStringAdded(employerName))
         {
             string errorMsg = "Member does not match any employer. Confirm employer Id";
             return StandardResponse<string>.Failed(errorMsg);
@@ -70,7 +73,12 @@ public sealed class MemberService : IMemberService
             return StandardResponse<string>.Failed(null, errorMsg);
         }
 
-        //Send Email to User with default password
+        string mailSubject = "NLPC EPS Pensions: Welcome Message";
+        string mailBody = CreateMailBody(member.FirstName, member.Id, employerName);
+        string senderName = "NLPC Enhanced Pension System";
+        var emailParams = new EmailParams(senderEmail, mailSubject, mailBody, member.Email, senderName, true);
+
+        _emailService.SendEmail(emailParams);
 
         string successMsg = "Member successfully registered. Kindly check mail for other details.";
         return StandardResponse<string>.Accepted(data: successMsg);
@@ -198,5 +206,58 @@ public sealed class MemberService : IMemberService
     private bool ConfirmStringAdded(string? stringValue)
     {
         return !string.IsNullOrWhiteSpace(stringValue);
+    }
+
+    private string CreateMailBody(string? memberFirstName, string? memberId, string? employerName)
+    {
+        string mailBody = $@"
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    color: #333;
+                    padding: 20px;
+                }}
+                .container {{
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background: #ffffff;
+                    padding: 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                }}
+                h2 {{
+                    color: #2c3e50;
+                }}
+                .highlight {{
+                    font-weight: bold;
+                    color: #3498db;
+                }}
+                .footer {{
+                    margin-top: 20px;
+                    font-size: 12px;
+                    color: #777;
+                    text-align: center;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <h2>Welcome to Your Pension Management Platform, {memberFirstName}!</h2>
+                <p>We are excited to inform you that you have been successfully registered under <strong>{employerName}</strong> for pension management.</p>
+                <p><strong>Your Member ID:</strong> <span class='highlight'>{memberId}</span></p>
+                <p>You can now track your contributions, check your pension status, and manage your retirement savings effortlessly.</p>
+                <p>If you have any questions or need assistance, our support team is always available to help.</p>
+                <p>We are delighted to have you onboard!</p>
+                <div class='footer'>
+                    <p>&copy; {DateTime.Now.Year} Your Company Name. All Rights Reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>";
+        return mailBody;
     }
 }

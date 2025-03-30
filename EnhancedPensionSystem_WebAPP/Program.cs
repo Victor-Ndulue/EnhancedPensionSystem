@@ -15,6 +15,7 @@ builder.Services.RegisterFluentValidation();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.RegisterFluentValidation();
 builder.Services.RegisterGenericRepo();
+builder.Services.SetupEmailConfiguration(builder.Configuration);
 builder.Services.ConfigureUserIdentityManager();
 builder.Services.RegisterUnitOfWork();
 builder.Services.RegisterDbContext(builder.Configuration);

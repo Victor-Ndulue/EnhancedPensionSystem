@@ -1,6 +1,9 @@
-﻿using EnhancedPensionSystem_Application.Helpers.DTOs.CustomErrors;
+﻿using EnhancedPensionSystem_Application.Helpers.DTOs.Configs;
+using EnhancedPensionSystem_Application.Helpers.DTOs.CustomErrors;
 using EnhancedPensionSystem_Application.Helpers.DTOValidations;
 using EnhancedPensionSystem_Application.Helpers.ObjectFormatter;
+using EnhancedPensionSystem_Application.Services.Abstractions;
+using EnhancedPensionSystem_Application.Services.Implementations;
 using EnhancedPensionSystem_Application.UnitOfWork.Abstraction;
 using EnhancedPensionSystem_Application.UnitOfWork.Implementations;
 using EnhancedPensionSystem_Domain.Models;
@@ -19,6 +22,16 @@ namespace EnhancedPensionSystem_WebAPP.Extensions;
 
 public static class ServiceExtensions
 {
+    public static void
+        SetupEmailConfiguration
+        (this IServiceCollection services, IConfigurationBuilder configurationBuilder)
+    {
+        IConfiguration configuration = configurationBuilder
+            .AddEnvironmentVariables("PAYBIGISMTP__")
+            .Build();
+        services.Configure<EmailConfig>(configuration);
+    }
+
     public static void 
         ConfigureSwaggerDocumentations(this IServiceCollection services)
     {

@@ -14,7 +14,7 @@ public class CreateEmployerParamsValidator : AbstractValidator<CreateEmployerPar
             .RequiredField();
 
         RuleFor(x => x.email)
-            .ValidOptionalEmailAddress();
+            .ValidOptionalEmailAddress().RequiredField();
 
         RuleFor(x => x.phoneNumber)
             .ValidOptionalPhoneNumericDigits();
