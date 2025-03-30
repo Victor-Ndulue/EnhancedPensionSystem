@@ -52,7 +52,7 @@ public static class ServiceExtensions
             o.Password.RequireNonAlphanumeric = false;
             o.Password.RequiredLength = 8;
             o.Password.RequiredUniqueChars = 0;
-            o.User.RequireUniqueEmail = true;
+            o.User.RequireUniqueEmail = false;
         })
         .AddEntityFrameworkStores<AppDbContext>()
         .AddDefaultTokenProviders();
