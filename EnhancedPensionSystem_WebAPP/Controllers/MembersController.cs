@@ -69,8 +69,8 @@ public class MembersController : BaseController
     /// </summary>
     /// <returns>A list of all members.</returns>
     /// <response code="200">Successfully retrieved all members.</response>
-    [HttpGet("get-all-employers")]
-    public async Task<IActionResult> GetAllEmployersAsync()
+    [HttpGet("get-all-members")]
+    public async Task<IActionResult> GetAllMembersAsync()
     {
         var result = await _memberService.GetAllMembersAsync();
         return StatusCode(result.StatusCode, result);
