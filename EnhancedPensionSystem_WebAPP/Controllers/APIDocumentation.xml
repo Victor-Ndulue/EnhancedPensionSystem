@@ -1,0 +1,266 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>EnhancedPensionSystem_WebAPP</name>
+    </assembly>
+    <members>
+        <member name="T:EnhancedPensionSystem_WebAPP.Controllers.BenefitEligibilitiesController">
+            <summary>
+            Controller for managing benefit eligibility operations.
+            </summary>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.BenefitEligibilitiesController.#ctor(EnhancedPensionSystem_Application.UnitOfWork.Abstraction.IServiceManager)">
+            <summary>
+            Initializes a new instance of the <see cref="T:EnhancedPensionSystem_WebAPP.Controllers.BenefitEligibilitiesController"/> class.
+            </summary>
+            <param name="serviceManager">The service manager that provides access to the benefit eligibility service.</param>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.BenefitEligibilitiesController.CheckMemberBenefitEligibilityAsync(System.String)">
+            <summary>
+            Checks if a member is eligible for benefits.
+            </summary>
+            <param name="memberId">The unique identifier of the member.</param>
+            <returns>
+            Returns a response indicating whether the member is eligible for benefits.
+            </returns>
+            <response code="200">Returns the eligibility status of the member.</response>
+            <response code="400">If the request is invalid or the member ID is missing.</response>
+            <response code="404">If the member is not found.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.BenefitEligibilitiesController.GetAllEligibleMembersAsync">
+            <summary>
+            Retrieves a list of all eligible members.
+            </summary>
+            <returns>
+            A list of members who qualify for benefits.
+            </returns>
+            <response code="200">Returns the list of eligible members.</response>
+            <response code="404">If no eligible members are found.</response>
+        </member>
+        <member name="T:EnhancedPensionSystem_WebAPP.Controllers.ContributionsController">
+            <summary>
+            Controller for managing member contributions.
+            </summary>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.ContributionsController.#ctor(EnhancedPensionSystem_Application.UnitOfWork.Abstraction.IServiceManager)">
+            <summary>
+            Initializes a new instance of the <see cref="T:EnhancedPensionSystem_WebAPP.Controllers.ContributionsController"/> class.
+            </summary>
+            <param name="serviceManager">The service manager that provides access to contribution services.</param>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.ContributionsController.AddContributionAsync(EnhancedPensionSystem_Application.Helpers.DTOs.Requests.AddContributionParams)">
+            <summary>
+            Adds a new contribution for a member.
+            </summary>
+            <param name="addContributionParams">The contribution details including member ID, amount, date, and type.</param>
+            <returns>Returns the status of the contribution addition.</returns>
+            <response code="201">Contribution successfully added.</response>
+            <response code="400">Invalid request data.</response>
+            <response code="500">Internal server error.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.ContributionsController.GetMemberContributionsAsync(System.String)">
+            <summary>
+            Retrieves a breakdown of a member's contributions.
+            </summary>
+            <param name="memberId">The unique identifier of the member.</param>
+            <returns>Returns a detailed breakdown of the member's contributions.</returns>
+            <response code="200">Successfully retrieved the contribution breakdown.</response>
+            <response code="400">Invalid member ID provided.</response>
+            <response code="404">Member contributions not found.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.ContributionsController.GetMemberTotalConributionAsync(System.String)">
+            <summary>
+            Gets the total contributions made by a specific member.
+            </summary>
+            <param name="memberId">The unique identifier of the member.</param>
+            <returns>Returns the total contribution amount for the member.</returns>
+            <response code="200">Successfully retrieved the total contributions.</response>
+            <response code="400">Invalid member ID provided.</response>
+            <response code="404">No contributions found for the member.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.ContributionsController.GetAllContributionsAsync">
+            <summary>
+            Retrieves a list of all contributions.
+            </summary>
+            <returns>Returns all contributions available in the system.</returns>
+            <response code="200">Successfully retrieved all contributions.</response>
+            <response code="500">Internal server error.</response>
+        </member>
+        <member name="T:EnhancedPensionSystem_WebAPP.Controllers.EmployersController">
+            <summary>
+            Controller for managing employer-related operations.
+            </summary>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.EmployersController.#ctor(EnhancedPensionSystem_Application.UnitOfWork.Abstraction.IServiceManager)">
+            <summary>
+            Initializes a new instance of the <see cref="T:EnhancedPensionSystem_WebAPP.Controllers.EmployersController"/> class.
+            </summary>
+            <param name="serviceManager">The service manager that provides access to employer-related services.</param>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.EmployersController.RegisterEmployerAsync(EnhancedPensionSystem_Application.Helpers.DTOs.Requests.CreateEmployerParams)">
+            <summary>
+            Registers a new employer.
+            </summary>
+            <param name="employerParams">The employer registration details.</param>
+            <returns>The result of the employer registration process.</returns>
+            <response code="201">Employer registered successfully.</response>
+            <response code="400">Invalid input data.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.EmployersController.GetAllEmployersAsync">
+            <summary>
+            Retrieves all registered employers.
+            </summary>
+            <returns>A list of employers.</returns>
+            <response code="200">Successfully retrieved employers.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.EmployersController.GetEmployerByIdAsync(System.String)">
+            <summary>
+            Retrieves an employer by their unique identifier.
+            </summary>
+            <param name="employerId">The employer's unique ID.</param>
+            <returns>The employer details if found.</returns>
+            <response code="200">Employer found and returned.</response>
+            <response code="404">Employer not found.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.EmployersController.UpdateEmployerAsync(EnhancedPensionSystem_Application.Helpers.DTOs.Requests.UpdateEmployerParams)">
+            <summary>
+            Updates an existing employer's details.
+            </summary>
+            <param name="updateEmployerParams">The updated employer details.</param>
+            <returns>The result of the update operation.</returns>
+            <response code="200">Employer updated successfully.</response>
+            <response code="400">Invalid input data.</response>
+            <response code="404">Employer not found.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.EmployersController.DeleteEmployerAsync(System.String)">
+            <summary>
+            Deletes an employer (soft delete).
+            </summary>
+            <param name="employerId">The employer's unique ID.</param>
+            <returns>The result of the delete operation.</returns>
+            <response code="200">Employer deleted successfully.</response>
+            <response code="404">Employer not found.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.EmployersController.DeactivateEmployerAsync(System.String)">
+            <summary>
+            Deactivates an employer.
+            </summary>
+            <param name="employerId">The employer's unique ID.</param>
+            <returns>The result of the deactivation process.</returns>
+            <response code="200">Employer deactivated successfully.</response>
+            <response code="404">Employer not found.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.EmployersController.ActivateEmployerAsync(System.String)">
+            <summary>
+            Activates a previously deactivated employer.
+            </summary>
+            <param name="employerId">The employer's unique ID.</param>
+            <returns>The result of the activation process.</returns>
+            <response code="200">Employer activated successfully.</response>
+            <response code="404">Employer not found.</response>
+        </member>
+        <member name="T:EnhancedPensionSystem_WebAPP.Controllers.MembersController">
+            <summary>
+            Controller for managing member-related operations.
+            </summary>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.MembersController.#ctor(EnhancedPensionSystem_Application.UnitOfWork.Abstraction.IServiceManager)">
+            <summary>
+            Initializes a new instance of the <see cref="T:EnhancedPensionSystem_WebAPP.Controllers.MembersController"/> class.
+            </summary>
+            <param name="serviceManager">The service manager that provides access to member-related services.</param>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.MembersController.RegisterMemberAsync(EnhancedPensionSystem_Application.Helpers.DTOs.Requests.CreateMemberParams)">
+            <summary>
+            Registers a new member.
+            </summary>
+            <param name="createMemberParams">The member registration details.</param>
+            <returns>The result of the member registration process.</returns>
+            <response code="201">Member registered successfully.</response>
+            <response code="400">Invalid input data.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.MembersController.GetMemberByIdAsync(System.String)">
+            <summary>
+            Retrieves a member by their unique identifier.
+            </summary>
+            <param name="memberId">The member's unique ID.</param>
+            <returns>The member details if found.</returns>
+            <response code="200">Member found and returned.</response>
+            <response code="404">Member not found.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.MembersController.GetEmployerMembersAsync(System.String)">
+            <summary>
+            Retrieves all members belonging to a specific employer.
+            </summary>
+            <param name="employerId">The employer's unique ID.</param>
+            <returns>A list of employer members.</returns>
+            <response code="200">Successfully retrieved employer members.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.MembersController.GetAllEmployersAsync">
+            <summary>
+            Retrieves all registered members.
+            </summary>
+            <returns>A list of all members.</returns>
+            <response code="200">Successfully retrieved all members.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.MembersController.UpdateMemberAsync(EnhancedPensionSystem_Application.Helpers.DTOs.Requests.UpdateMemberParams)">
+            <summary>
+            Updates an existing member's details.
+            </summary>
+            <param name="updateMemberParams">The updated member details.</param>
+            <returns>The result of the update operation.</returns>
+            <response code="200">Member updated successfully.</response>
+            <response code="400">Invalid input data.</response>
+            <response code="404">Member not found.</response>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.MembersController.DeleteMemberAsync(System.String)">
+            <summary>
+            Deletes a member (soft delete).
+            </summary>
+            <param name="memberId">The member's unique ID.</param>
+            <returns>The result of the delete operation.</returns>
+            <response code="200">Member deleted successfully.</response>
+            <response code="404">Member not found.</response>
+        </member>
+        <member name="T:EnhancedPensionSystem_WebAPP.Controllers.NotificationsController">
+            <summary>
+            Controller for managing user notifications.
+            </summary>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.NotificationsController.#ctor(EnhancedPensionSystem_Application.UnitOfWork.Abstraction.IServiceManager)">
+            <summary>
+            Initializes a new instance of the <see cref="T:EnhancedPensionSystem_WebAPP.Controllers.NotificationsController"/> class.
+            </summary>
+            <param name="serviceManager">The service manager that provides access to notification-related services.</param>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.NotificationsController.GetUserNotificationsAsync(System.String)">
+            <summary>
+            Retrieves all notifications for a specific user.
+            </summary>
+            <param name="userId">The unique identifier of the user.</param>
+            <returns>A list of notifications for the specified user.</returns>
+            <response code="200">Notifications retrieved successfully.</response>
+            <response code="404">User not found or no notifications available.</response>
+        </member>
+        <member name="T:EnhancedPensionSystem_WebAPP.Controllers.TransactionsController">
+            <summary>
+            Controller for handling financial transactions related to members.
+            </summary>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.TransactionsController.#ctor(EnhancedPensionSystem_Application.UnitOfWork.Abstraction.IServiceManager)">
+            <summary>
+            Initializes a new instance of the <see cref="T:EnhancedPensionSystem_WebAPP.Controllers.TransactionsController"/> class.
+            </summary>
+            <param name="serviceManager">The service manager that provides access to transaction-related services.</param>
+        </member>
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.TransactionsController.GetMemberTransactionsAsync(System.String)">
+            <summary>
+            Retrieves all transactions associated with a specific member.
+            </summary>
+            <param name="memberId">The unique identifier of the member.</param>
+            <returns>A list of transactions related to the specified member.</returns>
+            <response code="200">Transactions retrieved successfully.</response>
+            <response code="404">No transactions found for the specified member.</response>
+        </member>
+    </members>
+</doc>

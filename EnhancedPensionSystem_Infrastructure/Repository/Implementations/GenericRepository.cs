@@ -1,13 +1,12 @@
-﻿using EnhancedPensionSystem_Infrastructure.Repository.Implementations;
-using Microsoft.EntityFrameworkCore.Storage;
+﻿using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using EnhancedPensionSystem_Infrastructure.DataContext;
 using EnhancedPensionSystem_Domain.Models;
 
-namespace EnhancedPensionSystem_Infrastructure.Repository.Abstractions;
+namespace EnhancedPensionSystem_Infrastructure.Repository.Implementations;
 
-public sealed class GenericRepository<T>:IGenericRepository<T> where T : class, IBaseEntity
+public sealed class GenericRepository<T> : IGenericRepository<T> where T : class, IBaseEntity
 {
     private readonly AppDbContext _dataContext;
     private readonly DbSet<T> _dbSet;
@@ -21,23 +20,21 @@ public sealed class GenericRepository<T>:IGenericRepository<T> where T : class, 
 
     public IQueryable<T> GetAll()
     {
-        return _dbSet.AsNoTracking();
+        return _dbSet;
     }
 
     public IQueryable<T>
         GetByCondition
         (Expression<Func<T, bool>> conditionExpression)
     {
-        return _dbSet.Where(conditionExpression)
-            .AsNoTracking();
+        return _dbSet.Where(conditionExpression);
     }
 
     public IQueryable<T>
         GetAllNonDeleted()
     {
         return _dbSet
-            .Where(t => !t.IsDeleted)
-            .AsNoTracking();
+            .Where(t => !t.IsDeleted);
     }
 
     public IQueryable<T>
@@ -45,8 +42,7 @@ public sealed class GenericRepository<T>:IGenericRepository<T> where T : class, 
         (Expression<Func<T, bool>> condition)
     {
         return _dbSet.Where(condition)
-            .Where(t => !t.IsDeleted)
-            .AsNoTracking();
+            .Where(t => !t.IsDeleted);
 
     }
 

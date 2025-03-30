@@ -2,8 +2,10 @@
 
 public class Member:AppUser
 {
-    public DateTime DateOfBirth { get; private set; }
-    public Guid EmployerId { get; private set; }
-    public Employer? Employer { get; private set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public DateTime? DateOfBirth { get; set; }
+    public string? EmployerId { get; set; }
+    public Employer? Employer { get; set; }
     public virtual ICollection<Contribution>? Contributions { get; set; }
 }

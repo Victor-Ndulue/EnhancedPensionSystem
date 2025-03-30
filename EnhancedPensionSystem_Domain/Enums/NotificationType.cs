@@ -4,5 +4,6 @@ public enum NotificationType
 {
     ContributionReceived,
     BenefitEligibilityUpdate,
-    FailedTransaction
+    FailedTransaction,
+    ContributionError
 }

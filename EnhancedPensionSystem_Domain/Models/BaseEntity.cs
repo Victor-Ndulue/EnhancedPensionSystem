@@ -2,7 +2,7 @@
 
 public class BaseEntity : IBaseEntity
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public string Id { get; set; } = Guid.NewGuid().ToString();
     public bool IsDeleted { get; set; } = false;
     public string? CreatedBy { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;

@@ -2,11 +2,14 @@
 
 namespace EnhancedPensionSystem_Domain.Models;
 
-public class Transaction:BaseEntity
+public class Transaction : BaseEntity
 {
-    public Guid ContributionId { get; private set; }
-    public Contribution? Contribution { get; private set; }
-    public decimal Amount { get; private set; }
-    public TransactionStatus Status { get; private set; }
-    public string? FailureReason { get; private set; }
+    public string? ContributionId { get; set; }
+    public Contribution? Contribution { get; set; }
+    public decimal Amount { get; set; }
+    public TransactionStatus TransactionStatus { get; set; }
+    public ContributionType ContributionType { get; set; }
+    public string? FailureReason { get; set; }
+    public string? MemberId { get; set; }
+    public virtual Member? Member { get; set; }
 }

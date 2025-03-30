@@ -13,9 +13,17 @@ public sealed class AppDbContext:IdentityDbContext<AppUser>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        /*
+         * The appuser, member and employer explicit mapping to to override EFCORE default Table-Per-Hierarchy mapping
+         * Using Table-Per-Type Mapping for scalability 
+         */
+        // Map base entity (AppUser) to a separate table
+        modelBuilder.Entity<AppUser>().ToTable("AppUsers");
 
-        modelBuilder.Entity<Member>().HasKey(x => x.Id);
-        modelBuilder.Entity<Employer>().HasKey(x => x.Id);
+        // Map derived types (Member and Employer) to separate tables
+        modelBuilder.Entity<Member>().ToTable("Members");
+        modelBuilder.Entity<Employer>().ToTable("Employers");
+
         modelBuilder.Entity<Contribution>().HasKey(x => x.Id);
         modelBuilder.Entity<BenefitEligibility>().HasKey(x => x.Id);
         modelBuilder.Entity<Transaction>().HasKey(x => x.Id);
@@ -54,7 +62,7 @@ public sealed class AppDbContext:IdentityDbContext<AppUser>
         }
     }
 
-    public DbSet<Contribution> Members { get; set; }
+    public DbSet<Member> Members { get; set; }
     public DbSet<Employer> Employers { get; set; }
     public DbSet<Contribution> Contributions { get; set; }
     public DbSet<BenefitEligibility> BenefitEligibilities { get; set; }

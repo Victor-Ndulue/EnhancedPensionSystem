@@ -2,8 +2,8 @@
 
 public class BenefitEligibility : BaseEntity
 {
-    public Guid MemberId { get; private set; }
-    public Member? Member { get; private set; }
-    public bool IsEligible { get; private set; } = false;
-    public DateTime EligibilityDate { get; private set; }
+    public string? MemberId { get; set; }
+    public Member? Member { get; set; }
+    public bool IsEligible { get; set; } 
+    public DateTime EligibilityDate { get; set; }
 }
