@@ -1,6 +1,6 @@
 ﻿using EnhancedPensionSystem_Application.Helpers.DTOs.Requests;
 using EnhancedPensionSystem_Application.Services.Abstractions;
-using EnhancedPensionSystem_Application.UnitOfWork.Implementations;
+using EnhancedPensionSystem_Application.UnitOfWork.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EnhancedPensionSystem_WebAPP.Controllers;
@@ -18,7 +18,7 @@ public class MembersController : BaseController
     /// Initializes a new instance of the <see cref="MembersController"/> class.
     /// </summary>
     /// <param name="serviceManager">The service manager that provides access to member-related services.</param>
-    public MembersController(ServiceManager serviceManager)
+    public MembersController(IServiceManager serviceManager)
     {
         _memberService = serviceManager.MemberService;
     }

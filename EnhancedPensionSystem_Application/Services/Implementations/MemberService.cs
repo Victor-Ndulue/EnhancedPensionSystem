@@ -253,7 +253,7 @@ public sealed class MemberService : IMemberService
                 <p>If you have any questions or need assistance, our support team is always available to help.</p>
                 <p>We are delighted to have you onboard!</p>
                 <div class='footer'>
-                    <p>&copy; {DateTime.Now.Year} Your Company Name. All Rights Reserved.</p>
+                    <p>&copy; {DateTime.Now.Year}  NLPC EPS+. All Rights Reserved.</p>
                 </div>
             </div>
         </body>

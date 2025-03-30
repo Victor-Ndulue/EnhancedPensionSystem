@@ -9,7 +9,7 @@
             Controller for managing benefit eligibility operations.
             </summary>
         </member>
-        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.BenefitEligibilitiesController.#ctor(EnhancedPensionSystem_Application.UnitOfWork.Implementations.ServiceManager)">
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.BenefitEligibilitiesController.#ctor(EnhancedPensionSystem_Application.UnitOfWork.Abstraction.IServiceManager)">
             <summary>
             Initializes a new instance of the <see cref="T:EnhancedPensionSystem_WebAPP.Controllers.BenefitEligibilitiesController"/> class.
             </summary>
@@ -164,7 +164,7 @@
             Controller for managing member-related operations.
             </summary>
         </member>
-        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.MembersController.#ctor(EnhancedPensionSystem_Application.UnitOfWork.Implementations.ServiceManager)">
+        <member name="M:EnhancedPensionSystem_WebAPP.Controllers.MembersController.#ctor(EnhancedPensionSystem_Application.UnitOfWork.Abstraction.IServiceManager)">
             <summary>
             Initializes a new instance of the <see cref="T:EnhancedPensionSystem_WebAPP.Controllers.MembersController"/> class.
             </summary>

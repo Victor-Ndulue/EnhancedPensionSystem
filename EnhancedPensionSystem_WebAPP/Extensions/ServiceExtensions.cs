@@ -2,20 +2,16 @@
 using EnhancedPensionSystem_Application.Helpers.DTOs.CustomErrors;
 using EnhancedPensionSystem_Application.Helpers.DTOValidations;
 using EnhancedPensionSystem_Application.Helpers.ObjectFormatter;
-using EnhancedPensionSystem_Application.Services.Abstractions;
-using EnhancedPensionSystem_Application.Services.Implementations;
 using EnhancedPensionSystem_Application.UnitOfWork.Abstraction;
 using EnhancedPensionSystem_Application.UnitOfWork.Implementations;
 using EnhancedPensionSystem_Domain.Models;
 using EnhancedPensionSystem_Infrastructure.DataContext;
 using EnhancedPensionSystem_Infrastructure.Repository.Implementations;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text.Json.Serialization;
 
 namespace EnhancedPensionSystem_WebAPP.Extensions;

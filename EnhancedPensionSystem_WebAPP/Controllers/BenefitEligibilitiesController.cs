@@ -1,5 +1,5 @@
 ﻿using EnhancedPensionSystem_Application.Services.Abstractions;
-using EnhancedPensionSystem_Application.UnitOfWork.Implementations;
+using EnhancedPensionSystem_Application.UnitOfWork.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EnhancedPensionSystem_WebAPP.Controllers;
@@ -17,7 +17,7 @@ public class BenefitEligibilitiesController : BaseController
     /// Initializes a new instance of the <see cref="BenefitEligibilitiesController"/> class.
     /// </summary>
     /// <param name="serviceManager">The service manager that provides access to the benefit eligibility service.</param>
-    public BenefitEligibilitiesController(ServiceManager serviceManager)
+    public BenefitEligibilitiesController(IServiceManager serviceManager)
     {
         _benefitEligibilityService = serviceManager.BenefitEligibilityService;
     }
