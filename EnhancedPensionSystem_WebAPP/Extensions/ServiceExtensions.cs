@@ -12,6 +12,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
 
 namespace EnhancedPensionSystem_WebAPP.Extensions;
@@ -28,25 +29,12 @@ public static class ServiceExtensions
         services.Configure<EmailConfig>(configuration);
     }
 
-    /*var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-
-    if (File.Exists(xmlPath))
-    {
-        options.IncludeXmlComments(xmlPath);
-    }
-});*/
-
     public static void 
         ConfigureSwaggerDocumentations(this IServiceCollection services)
     {
         services.AddSwaggerGen(opts => {
-            string basePath = Directory.GetCurrentDirectory();
-            string controllersPath = Path.Combine(basePath, "Controllers");
-            var xmlFile = "APIDocumentation.xml";
-            var xmlPath = Path.Combine(controllersPath, xmlFile);
-            var documentationPath = Path.GetFullPath(xmlPath);
-            opts.IncludeXmlComments(documentationPath);
+        var xmlPath = Path.Combine(AppContext.BaseDirectory, "EnhancedPensionSystem_WebAPP.xml");
+        opts.IncludeXmlComments(xmlPath);
         });
     }
 
